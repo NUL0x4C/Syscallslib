@@ -14,9 +14,9 @@
 
 ### Usage :
 - initialize the struct holding the hashes of the syscalls names using *InitializeStruct()*, it takes 2 parameters, the seed used, and a pointer to *HashStruct* struct:
-- to automates this even more, i included [Hasher.c]() file that can output the hashes of the syscalls directly ...
+- to automates this even more, i included [Hasher.c](https://github.com/ORCx41/Syscallslib/blob/main/Hasher/Hasher.c) file that can output the hashes of the syscalls directly ...
 - after that you are ready to do syscalls
-- added a small project to demonstrate the usage [here]().
+- added a small project to demonstrate the usage [here](https://github.com/ORCx41/Syscallslib/tree/main/Test).
 
 
 ### TODO:
