@@ -42,13 +42,13 @@ int main() {
 
 	HashStruct SyscallHashStruct = {
 
-	.NtAllocateVirtualMemory_Hash = NtAllocateVirtualMemory_StrHashed,
+	.NtAllocateVirtualMemory_Hash   = NtAllocateVirtualMemory_StrHashed,
 	.NtProtectVirtualMemory_Hash	= NtProtectVirtualMemory_StrHashed,
-	.NtCreateSection_Hash			    = NtCreateSection_StrHashed,
-	.NtOpenSection_Hash			      = NtOpenSection_StrHashed,
-	.NtMapViewOfSection_Hash		  = NtMapViewOfSection_StrHashed,
-	.NtUnmapViewOfSection_Hash	  = NtUnmapViewOfSection_StrHashed,
-	.NtClose_Hash					        = NtClose_StrHashed,
+	.NtCreateSection_Hash		= NtCreateSection_StrHashed,
+	.NtOpenSection_Hash		= NtOpenSection_StrHashed,
+	.NtMapViewOfSection_Hash	= NtMapViewOfSection_StrHashed,
+	.NtUnmapViewOfSection_Hash	= NtUnmapViewOfSection_StrHashed,
+	.NtClose_Hash			= NtClose_StrHashed,
 
 	};
 
