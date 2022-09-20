@@ -260,15 +260,14 @@ NtMapViewOfSection(
 	HANDLE              tmpSectionHandle	= SectionHandle;
 	HANDLE              tmpProcessHandle	= (HANDLE)-1;
 	PVOID				tmpBaseAddress		= NULL;
-	ULONG               tmpAllocationType	= NULL;
+	ULONG               tmpAllocationType	= 0;
 	ULONG               tmpProtect			= PAGE_READWRITE;
 
 	// variables needed for the syscall:
-	ULONG                ZeroBits				= NULL;
-	ULONG                CommitSize				= NULL;
+	ULONG_PTR            ZeroBits				= 0;
+	SIZE_T               CommitSize				= 0;
 	PLARGE_INTEGER		 SectionOffset			= NULL;
-	ULONG				 ViewSize				= NULL;
-	DWORD				 InheritDisposition		= 1;
+	PSIZE_T				 ViewSize				= NULL;
 	
 	
 	// in case of new non-default values:
@@ -284,7 +283,7 @@ NtMapViewOfSection(
 
 	HellsGate(getSyscallNumber());
 
-	NTSTATUS Status = HellDescent(tmpSectionHandle, tmpProcessHandle, &tmpBaseAddress, ZeroBits, CommitSize, SectionOffset, &ViewSize, InheritDisposition, tmpAllocationType, tmpProtect);
+	NTSTATUS Status = HellDescent(tmpSectionHandle, tmpProcessHandle, &tmpBaseAddress, ZeroBits, CommitSize, SectionOffset, &ViewSize, ViewShare, tmpAllocationType, tmpProtect);
 
 	if (STATUS != NULL)
 		*STATUS = Status;
