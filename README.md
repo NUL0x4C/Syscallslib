@@ -1,5 +1,4 @@
-### Syscallslib: a library that automates some clean syscalls to make it easier & faster to implement.
-### What is it : its pretty basic code, im using hellsgate (TartarusGate) tech to fetch direct syscalls, and it saves times when needed.
+### Syscallslib: a library that automates some clean syscalls to make it easier & faster to implement. its pretty basic code, im using hellsgate (TartarusGate) tech to fetch direct syscalls, and it saves times when needed.
 
 
 ### So Far The Syscalls Supported :
