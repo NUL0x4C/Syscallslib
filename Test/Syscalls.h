@@ -1,0 +1,148 @@
+#pragma once
+
+#ifdef __cplusplus
+#define EXTERN extern "C"
+#else
+#define EXTERN extern
+#endif
+
+#ifndef _SYSCALLS_H
+#define _SYSCALLS_H
+
+#include <Windows.h>
+
+
+//tmp: 
+
+typedef struct _UNICODE_STRING {
+	USHORT Length;
+	USHORT MaximumLength;
+	PWSTR  Buffer;
+} UNICODE_STRING, * PUNICODE_STRING;
+
+//tmp: 
+typedef struct _OBJECT_ATTRIBUTES {
+	ULONG Length;
+	HANDLE RootDirectory;
+	PUNICODE_STRING ObjectName;
+	ULONG Attributes;
+	PVOID SecurityDescriptor;
+	PVOID SecurityQualityOfService;
+} OBJECT_ATTRIBUTES, * POBJECT_ATTRIBUTES;
+
+
+typedef struct _HashStruct {
+	DWORD NtAllocateVirtualMemory_Rotr32Hash;
+	DWORD NtProtectVirtualMemory_Rotr32Hash;
+
+	DWORD NtCreateSection_Rotr32Hash;
+	DWORD NtOpenSection_Rotr32Hash;
+	DWORD NtMapViewOfSection_Rotr32Hash;
+	DWORD NtUnmapViewOfSection_Rotr32Hash;
+
+	DWORD NtClose_Rotr32Hash;
+
+}HashStruct, * PHashStruct;
+
+
+
+EXTERN BOOL
+InitializeStruct(
+	IN			INT			Seed,									// INPUT : Seed Of The Rotr32 Hashing algo
+	IN			PHashStruct PStruct									// INPUT : pointer to a struct of type 'HashStruct' that will initialize the data 
+);
+
+EXTERN PVOID
+NtAllocateVirtualMemory(
+	IN  OPTIONAL  HANDLE	ProcessHandle,							// INPUT  : in case of null, the function will run localy
+	IN  OPTIONAL  PVOID		BaseAddress,							// INPUT  : NULL by default  
+	IN			  SIZE_T	RegionSize,								// INPUT  : can't be NULL
+	IN  OPTIONAL  ULONG		AllocationType,							// INPUT  : MEM_COMMIT | MEM_RESERVE by default
+	IN  OPTIONAL  ULONG		Protect,								// INPUT  : PAGE_READWRITE by default
+	OUT OPTIONAL  PNTSTATUS	STATUS									// OUTPUT : the return from the syscall
+);
+
+// calling the default NtAllocateVirtualMemory | u can do such thing to the others ...
+EXTERN PVOID
+NtAllocateVirtualMemory2(
+	IN			  SIZE_T	RegionSize,								// INPUT  : can't be NULL
+	OUT OPTIONAL  PNTSTATUS	STATUS									// OUTPUT : the return from the syscall
+);
+
+EXTERN ULONG
+NtProtectVirtualMemory(
+	IN  OPTIONAL HANDLE		ProcessHandle,							// INPUT  : in case of null, the function will run localy
+	IN			 PVOID		BaseAddress,							// INPUT  : can't be NULL
+	IN			 SIZE_T		NumberOfBytesToProtect,					// INPUT  : can't be NULL
+	IN			 ULONG		NewAccessProtection,					// INPUT  : can't be NULL
+	OUT OPTIONAL PNTSTATUS	STATUS									// OUTPUT : the return from the syscall
+);
+
+EXTERN HANDLE
+NtCreateSection(
+	IN	OPTIONAL	ACCESS_MASK			DesiredAccess,				// INPUT  : SECTION_ALL_ACCESS by default
+	IN	OPTIONAL	POBJECT_ATTRIBUTES	ObjectAttributes,			// INPUT  : NULL by default
+	IN				SIZE_T				NumberOfBytes,				// INPUT  : can't be NULL
+	IN	OPTIONAL	ULONG               SectionPageProtection,		// INPUT  : PAGE_READWRITE be default
+	IN	OPTIONAL	ULONG               AllocationAttributes,		// INPUT  : SEC_COMMIT by default
+	IN	OPTIONAL	HANDLE              FileHandle,					// INPUT  : NULL by default
+	OUT OPTIONAL	PNTSTATUS			STATUS						// OUTPUT : the return from the syscall
+
+);
+
+
+
+EXTERN HANDLE
+NtOpenSection(
+	IN	OPTIONAL	ACCESS_MASK			DesiredAccess,				// INPUT  : SECTION_ALL_ACCESS by default
+	IN				POBJECT_ATTRIBUTES  ObjectAttributes,			// INPUT  : can't be NULL
+	OUT OPTIONAL	PNTSTATUS			STATUS						// OUTPUT : the return from the syscall
+);
+
+EXTERN PVOID
+NtMapViewOfSection(
+	IN				HANDLE              SectionHandle,				// INPUT  : can't be NULL
+	IN  OPTIONAL	HANDLE              ProcessHandle,				// INPUT  : in case of null, the function will run localy
+	IN  OPTIONAL	PVOID				BaseAddress,				// INPUT  : NULL by default
+	IN  OPTIONAL	ULONG               AllocationType,				// INPUT  : NULL by default
+	IN  OPTIONAL	ULONG               Protect,					// INPUT  : PAGE_READWRITE by default
+	OUT OPTIONAL	PNTSTATUS			STATUS						// OUTPUT : the return from the syscall
+
+);
+
+
+EXTERN VOID
+NtUnmapViewOfSection(
+	IN  OPTIONAL	HANDLE              ProcessHandle,				// INPUT  : in case of null, the function will run localy
+	IN  			PVOID				BaseAddress,				// INPUT  : can't be NULL
+	OUT OPTIONAL	PNTSTATUS			STATUS						// OUTPUT : the return from the syscall
+);
+
+
+
+EXTERN VOID
+NtClose(															
+	IN				HANDLE              SectionHandle,				// INPUT  : can't be NULL
+	OUT OPTIONAL	PNTSTATUS			STATUS						// OUTPUT : the return from the syscall
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif // !_SYSCALLS_H
