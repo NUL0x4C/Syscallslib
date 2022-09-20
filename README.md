@@ -1,4 +1,6 @@
 ### Syscallslib: a library that automates some clean syscalls to make it easier & faster to implement.
+### What is it : its pretty basic code, im using hellsgate (TartarusGate) tech to fetch direct syscalls, and it saves times when needed.
+
 
 ### So Far The Syscalls Supported :
 - NtAllocateVirtualMemory
@@ -8,9 +10,6 @@
 - NtMapViewOfSection
 - NtUnmapViewOfSection
 - NtClose
-
-
-### What is it : its pretty basic code, im using hellsgate (TartarusGate) tech to fetch direct syscalls, and it saves times when needed.
 
 ### Usage :
 - initialize the struct holding the hashes of the syscalls names using *InitializeStruct()*, it takes 2 parameters, the seed used, and a pointer to *HashStruct* struct:
