@@ -12,6 +12,11 @@ typedef struct _LSA_UNICODE_STRING {
 } LSA_UNICODE_STRING, * PLSA_UNICODE_STRING, UNICODE_STRING, * PUNICODE_STRING, * PUNICODE_STR;
 
 
+typedef enum _SECTION_INHERIT {
+	ViewShare = 1,
+	ViewUnmap = 2
+} SECTION_INHERIT, * PSECTION_INHERIT;
+
 typedef struct _LDR_MODULE {
 	LIST_ENTRY              InLoadOrderModuleList;
 	LIST_ENTRY              InMemoryOrderModuleList;
