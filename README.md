@@ -2,13 +2,16 @@
 
 
 ### So Far The Syscalls Supported :
-- NtAllocateVirtualMemory
+- NtAllocateVirtualMemory /2
 - NtProtectVirtualMemory
 - NtCreateSection
 - NtOpenSection
 - NtMapViewOfSection
 - NtUnmapViewOfSection
 - NtClose
+- NtWriteVirtualMemory
+- NtCreateUserProcess /2
+- NtQuerySystemInformation
 
 ### Usage :
 - initialize the struct holding the hashes of the syscalls names using *InitializeStruct()*, it takes 2 parameters, the seed used, and a pointer to *HashStruct* struct:
