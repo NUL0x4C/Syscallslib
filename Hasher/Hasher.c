@@ -38,7 +38,6 @@ INT HashStringRotr32A(PCHAR String)
 
 int main() {
 
- 
     printf("#define %s%s \t0x%0.8X \n", "NtAllocateVirtualMemory", NAME, HashStringRotr32A("NtAllocateVirtualMemory"));
     printf("#define %s%s \t0x%0.8X \n", "NtProtectVirtualMemory", NAME, HashStringRotr32A("NtProtectVirtualMemory"));
 
@@ -50,8 +49,9 @@ int main() {
     printf("#define %s%s \t0x%0.8X \n", "NtClose", NAME, HashStringRotr32A("NtClose"));
 
 
-
-    
+    printf("#define %s%s \t0x%0.8X \n", "NtQuerySystemInformation", NAME, HashStringRotr32A("NtQuerySystemInformation"));
+    printf("#define %s%s \t0x%0.8X \n", "NtCreateUserProcess", NAME, HashStringRotr32A("NtCreateUserProcess"));
+    printf("#define %s%s \t0x%0.8X \n", "NtWriteVirtualMemory", NAME, HashStringRotr32A("NtWriteVirtualMemory"));
 
 
     //printf("#define %s%s \t0x%0.8X \n", "", NAME, HashStringRotr32A(""));
