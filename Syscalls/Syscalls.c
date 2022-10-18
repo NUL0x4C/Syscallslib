@@ -4,12 +4,6 @@
 #include "Utils.h"
 
 
-/*
-#define NtQuerySystemInformation_StrHashed      0xEFFC1CF8
-#define NtCreateUserProcess_StrHashed   0x0C43BACB
-#define NtWriteVirtualMemory_StrHashed  0x1130814D
-*/
-
 typedef struct _HashStruct {
 
 	DWORD NtAllocateVirtualMemory_StrHashed;
