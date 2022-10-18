@@ -4,9 +4,14 @@
 #include "Utils.h"
 
 
-
+/*
+#define NtQuerySystemInformation_StrHashed      0xEFFC1CF8
+#define NtCreateUserProcess_StrHashed   0x0C43BACB
+#define NtWriteVirtualMemory_StrHashed  0x1130814D
+*/
 
 typedef struct _HashStruct {
+
 	DWORD NtAllocateVirtualMemory_StrHashed;
 	DWORD NtProtectVirtualMemory_StrHashed;
 
@@ -16,6 +21,12 @@ typedef struct _HashStruct {
 	DWORD NtUnmapViewOfSection_StrHashed;
 
 	DWORD NtClose_StrHashed;
+
+
+	DWORD NtQuerySystemInformation_StrHashed;
+	DWORD NtCreateUserProcess_StrHashed;
+	DWORD NtWriteVirtualMemory_StrHashed;
+
 
 }HashStruct, * PHashStruct;
 
@@ -42,6 +53,12 @@ InitializeStruct(
 	SyscallHashStruct.NtMapViewOfSection_StrHashed = PStruct->NtMapViewOfSection_StrHashed;
 	SyscallHashStruct.NtUnmapViewOfSection_StrHashed = PStruct->NtUnmapViewOfSection_StrHashed;
 	SyscallHashStruct.NtClose_StrHashed = PStruct->NtClose_StrHashed;
+
+
+	SyscallHashStruct.NtQuerySystemInformation_StrHashed = PStruct->NtQuerySystemInformation_StrHashed;
+	SyscallHashStruct.NtCreateUserProcess_StrHashed = PStruct->NtCreateUserProcess_StrHashed;
+	SyscallHashStruct.NtWriteVirtualMemory_StrHashed = PStruct->NtWriteVirtualMemory_StrHashed;
+
 
 	return TRUE;
 }
@@ -345,4 +362,192 @@ NtClose(
 		*STATUS = Status;
 
 }
+
+
+
+SIZE_T NtWriteVirtualMemory(
+	IN OPTIONAL		HANDLE               ProcessHandle,
+	IN				PVOID                BaseAddress,
+	IN				PVOID                Buffer,
+	IN				SIZE_T               NumberOfBytesToWrite,
+	OUT OPTIONAL	PNTSTATUS			 STATUS						// OUTPUT : the return from the syscall
+) {
+
+
+	if (BaseAddress == NULL || Buffer == NULL || NumberOfBytesToWrite == NULL)
+		return NULL;
+
+	if (!InitializeSyscallviaTartarus(SyscallHashStruct.NtWriteVirtualMemory_StrHashed))
+		return NULL;
+
+	// default values:
+	HANDLE              tmpProcessHandle		= (HANDLE)-1;
+	PVOID               tmpBaseAddress			= (PVOID)BaseAddress;
+	PVOID				tmpBuffer				= (PVOID)Buffer;
+	SIZE_T				tmpNumberOfBytesToWrite = (SIZE_T)NumberOfBytesToWrite;
+
+
+
+	// in case of new non-default values:
+	if (ProcessHandle != NULL)
+		tmpProcessHandle = ProcessHandle;
+
+
+	// variables needed for the syscall:
+	SIZE_T NumberOfBytesWritten = NULL;
+
+	
+	
+	HellsGate(getSyscallNumber());
+	NTSTATUS Status = HellDescent(tmpProcessHandle, tmpBaseAddress, tmpBuffer, tmpNumberOfBytesToWrite, &NumberOfBytesWritten);
+
+	if (STATUS != NULL)
+		*STATUS = Status;
+
+	return NumberOfBytesWritten;
+}
+
+
+
+
+BOOL NtCreateUserProcess(
+	OUT				PHANDLE							ProcessHandle,
+	OUT				PHANDLE							ThreadHandle,
+	IN	OPTIONAL	ACCESS_MASK						ProcessDesiredAccess,
+	IN	OPTIONAL	ACCESS_MASK						ThreadDesiredAccess,
+	IN	OPTIONAL	POBJECT_ATTRIBUTES				ProcessObjectAttributes,
+	IN	OPTIONAL	POBJECT_ATTRIBUTES				ThreadObjectAttributes,
+	IN	OPTIONAL	ULONG							ProcessFlags,
+	IN	OPTIONAL	ULONG							ThreadFlags,
+	IN				PRTL_USER_PROCESS_PARAMETERS	ProcessParameters,
+	IN				PPS_CREATE_INFO					CreateInfo,
+	IN				PPS_ATTRIBUTE_LIST				AttributeList,
+	OUT OPTIONAL	PNTSTATUS						STATUS						// OUTPUT : the return from the syscall
+) {
+
+
+	if (ProcessHandle == NULL || ThreadHandle == NULL || ProcessParameters == NULL || CreateInfo == NULL || AttributeList == NULL) {
+		printf("[!] NULL Check \n");
+		return FALSE;
+	}
+
+	if (!InitializeSyscallviaTartarus(SyscallHashStruct.NtCreateUserProcess_StrHashed)) {
+		printf("[!] InitializeSyscallviaTartarus \n");
+		return FALSE;
+	}
+
+	// default values:
+	ACCESS_MASK						tmpProcessDesiredAccess		= PROCESS_ALL_ACCESS;
+	ACCESS_MASK						tmpThreadDesiredAccess		= PROCESS_ALL_ACCESS;
+	POBJECT_ATTRIBUTES				tmpProcessObjectAttributes	= NULL;
+	POBJECT_ATTRIBUTES				tmpThreadObjectAttributes	= NULL;
+	ULONG							tmpProcessFlags				= NULL;
+	ULONG							tmpThreadFlags				= NULL;
+
+
+
+	// in case of new non-default values:
+	if (ProcessDesiredAccess != NULL)
+		tmpProcessDesiredAccess = ProcessDesiredAccess;
+	if (ThreadDesiredAccess != NULL)
+		tmpThreadDesiredAccess = ThreadDesiredAccess;
+	if (ProcessObjectAttributes != NULL)
+		tmpProcessObjectAttributes = ProcessObjectAttributes;
+	if (ThreadObjectAttributes != NULL)
+		tmpThreadObjectAttributes = ThreadObjectAttributes;
+	if (ProcessFlags != NULL)
+		tmpProcessFlags = ProcessFlags;
+	if (ThreadFlags != NULL)
+		tmpThreadFlags = ThreadFlags;
+
+
+	HellsGate(getSyscallNumber());
+
+	NTSTATUS Status = HellDescent(
+		ProcessHandle,
+		ThreadHandle,
+		tmpProcessDesiredAccess,
+		tmpThreadDesiredAccess,
+		tmpProcessObjectAttributes,
+		tmpThreadObjectAttributes,
+		tmpProcessFlags,
+		tmpThreadFlags,
+		ProcessParameters,
+		CreateInfo,
+		AttributeList
+	);
+
+	if (STATUS != NULL)
+		*STATUS = Status;
+
+	if (*ProcessHandle == NULL || *ThreadHandle == NULL)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+BOOL NtCreateUserProcess2(
+	OUT				PHANDLE							ProcessHandle,
+	OUT				PHANDLE							ThreadHandle,
+	IN				PRTL_USER_PROCESS_PARAMETERS	ProcessParameters,
+	IN				PPS_CREATE_INFO					CreateInfo,
+	IN				PPS_ATTRIBUTE_LIST				AttributeList,
+	OUT OPTIONAL	PNTSTATUS						STATUS						// OUTPUT : the return from the syscall
+) {
+	
+	return NtCreateUserProcess(ProcessHandle, ThreadHandle, NULL, NULL, NULL, NULL, NULL, NULL, ProcessParameters, CreateInfo, AttributeList, STATUS);
+}
+
+
+
+BOOL NtQuerySystemInformation(
+	IN					SYSTEM_INFORMATION_CLASS		SystemInformationClass,
+	IN	OPTIONAL		PVOID							SystemInformation,
+	IN	OPTIONAL		ULONG							SystemInformationLength,
+	OUT OPTIONAL		PULONG							ReturnLength,
+	OUT OPTIONAL		PNTSTATUS						STATUS						// OUTPUT : the return from the syscall
+) {
+
+	if (SystemInformationClass == NULL || ReturnLength == NULL)
+		return FALSE;
+
+	if (!InitializeSyscallviaTartarus(SyscallHashStruct.NtQuerySystemInformation_StrHashed))
+		return FALSE;
+
+
+	// default values:
+	PVOID tmpSystemInformation				= NULL;
+	PVOID tmpSystemInformationLength		= NULL;
+
+
+	// in case of new non-default values:
+	if (SystemInformation != NULL)
+		tmpSystemInformation = SystemInformation;
+	if (SystemInformationLength != NULL)
+		tmpSystemInformationLength = SystemInformationLength;
+
+
+	HellsGate(getSyscallNumber());
+
+
+	NTSTATUS Status = HellDescent(SystemInformationClass, tmpSystemInformation, tmpSystemInformationLength, ReturnLength);
+
+	if (STATUS != NULL)
+		*STATUS = Status;
+
+	if (*ReturnLength == NULL)
+		return FALSE;
+
+	return TRUE;
+}
+
+
+
+
+
+
+
+
+
 
